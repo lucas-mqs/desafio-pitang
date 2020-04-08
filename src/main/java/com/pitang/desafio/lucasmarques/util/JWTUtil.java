@@ -18,7 +18,7 @@ public abstract class JWTUtil {
 
     private static final String ISSUER = "Pitang";
 
-    public static String generateToken(final UserDTO userDTO) {
+    public static String generateToken(final LoginDTO userDTO) {
         LocalDateTime expiryTime = LocalDateTime.now().plusHours(1);
         final Date expiresAt = Date.from(expiryTime.atZone(ZoneId.systemDefault()).toInstant());
         return JWT.create() //
@@ -34,7 +34,7 @@ public abstract class JWTUtil {
             return false;
         }
         try {
-            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SECRET.getBytes())) //
+            var verifier = JWT.require(Algorithm.HMAC256(SECRET.getBytes())) //
                 .withIssuer(ISSUER) //
                 .withClaim("login", getClaimByName(token, "login", String.class)) //
                 .withClaim("password", getClaimByName(token, "password", String.class)) //
@@ -48,8 +48,8 @@ public abstract class JWTUtil {
 
     public static <T> T getClaimByName(final String token, final String name, final Class<T> type) {
         final DecodedJWT decode = JWT.decode(token);
-        final Claim valor = decode.getClaim(name);
-        return valor.isNull() ? null : valor.as(type);
+        final Claim value = decode.getClaim(name);
+        return value.isNull() ? null : value.as(type);
     }
 
 }
